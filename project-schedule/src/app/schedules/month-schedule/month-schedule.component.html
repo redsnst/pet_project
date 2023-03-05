@@ -1,0 +1,35 @@
+<app-selector></app-selector>
+<div>
+    <table>
+        <thead>
+            <tr class="table-header">
+                <th>Sunday</th>
+                <th>Monday</th>
+                <th>Tuesday</th>
+                <th>Wednesday</th>
+                <th>Thursday</th>
+                <th>Friday</th>
+                <th>Saturday</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let week of calendar">
+                <td *ngFor="let day of week.days">
+                    <mat-card 
+                        [class.disabled]="day.disabled"
+                        [class.active]="day.active" 
+                        class="example-card">
+                        <mat-card-header>
+                          <mat-card-title (click)="openDialog(day)">{{day.value | dayMoment}}</mat-card-title>
+                        </mat-card-header>
+                        <mat-card-content>
+                            <div class="event-block" *ngFor="let ev of day.event">
+                                {{ev.name}} {{ev.timeFrom}}-{{ev.timeTo}}
+                            </div>
+                        </mat-card-content>
+                      </mat-card>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>

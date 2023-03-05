@@ -1,0 +1,23 @@
+<h1 mat-dialog-title>New Event</h1>
+<div mat-dialog-content>
+  <mat-form-field appearance="fill">
+    <mat-label>Name</mat-label>
+    <input matInput [(ngModel)]="data.name">
+  </mat-form-field>
+  <mat-form-field appearance="fill">
+    <mat-label>Description</mat-label>
+    <input matInput [(ngModel)]="data.description">
+  </mat-form-field>
+  <mat-form-field appearance="fill">
+    <mat-label>Time From</mat-label>
+    <input matInput [(ngModel)]="data.timeFrom">
+  </mat-form-field>
+  <mat-form-field appearance="fill">
+    <mat-label>Time To</mat-label>
+    <input matInput [(ngModel)]="data.timeTo">
+  </mat-form-field>
+</div>
+<div mat-dialog-actions>
+  <button mat-button (click)="onNoClick()">Close</button>
+  <button mat-button [mat-dialog-close]="data" cdkFocusInitial>Save</button>
+</div>
