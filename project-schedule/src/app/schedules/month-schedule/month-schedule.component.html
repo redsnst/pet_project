@@ -24,7 +24,7 @@
                         </mat-card-header>
                         <mat-card-content>
                             <div class="event-block" *ngFor="let ev of day.event">
-                                {{ev.name}} {{ev.timeFrom}}-{{ev.timeTo}}
+                                {{ev.name}} {{ev.timeFrom | event}}-{{ev.timeTo | event}}
                             </div>
                         </mat-card-content>
                       </mat-card>

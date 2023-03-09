@@ -16,6 +16,8 @@ import { TabSelectorComponent } from './tab-selector/tab-selector.component';
 import { MomentPipe } from './shared/moment.pipe';
 import { DayMomentPipe } from './shared/day-moment.pipe';
 import { EventModalComponent } from './event-modal/event-modal.component';
+import { DaySchedulePipe } from './shared/day-schedule.pipe';
+import { EventPipe } from './shared/event.pipe';
 
 @NgModule({
   declarations: [
@@ -29,7 +31,9 @@ import { EventModalComponent } from './event-modal/event-modal.component';
     WeekScheduleComponent,
     DayScheduleComponent,
     DayMomentPipe,
-    EventModalComponent
+    EventModalComponent,
+    DaySchedulePipe,
+    EventPipe
   ],
   imports: [
     BrowserModule,
