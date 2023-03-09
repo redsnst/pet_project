@@ -2,8 +2,10 @@ import { Component, OnInit } from '@angular/core';
 import { DateService } from 'src/app/shared/date.service';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as moment from 'moment';
-import {MatDialog, MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
+import { MatDialog } from '@angular/material/dialog';
 import { EventModalComponent,  } from 'src/app/event-modal/event-modal.component';
+import { TaskService, fireTask } from 'src/app/shared/task.service';
+import { switchMap } from 'rxjs/operators';
 
 interface Day {
   value: moment.Moment,
@@ -28,28 +30,48 @@ export class MonthScheduleComponent implements OnInit {
 
   public calendar: Week[] = []
   public name!: string;
-  public description!: string;
   public timeFrom!: string;
   public timeTo!: string;
 
-  public constructor(private readonly dateService: DateService, public dialog: MatDialog) { }
+  public constructor(private readonly dateService: DateService, public dialog: MatDialog, private readonly taskService: TaskService) { }
 
   public openDialog(day: Day): void {
     const dialogRef = this.dialog.open(EventModalComponent, {
-      data: {name: this.name, description: this.description, timeFrom: this.timeFrom, timeTo: this.timeTo},
+      data: {name: this.name, timeFrom: this.timeFrom, timeTo: this.timeTo},
     });
 
     dialogRef.afterClosed().subscribe(result => {
       if (result && result.name && result.timeFrom && result.timeTo) {
-        day.event.push(result);
-        console.log(day);
+        
+        const task = {
+          name: result.name,
+          timeFrom: `${day.value.format('YYYY-MM-DD')} ${result.timeFrom}:00`,
+          timeTo: `${day.value.format('YYYY-MM-DD')} ${result.timeTo}:00`,
+          currentDate: day.value.format('DD-MM-YYYY'),
+          date: day.value.format('MM-YYYY')
+        }
+        day.event.push(task);
+        this.taskService.create(task).pipe(untilDestroyed(this)).subscribe();
       }
     });
   }
 
 
   public ngOnInit(): void {
-    this.dateService.date.pipe(untilDestroyed(this)).subscribe(this.generateCalendare.bind(this));
+    this.dateService.date.pipe(untilDestroyed(this)).subscribe(date => {
+      this.generateCalendare(date);
+    });
+
+    this.dateService.date.pipe(
+      switchMap(value => this.taskService.load(value)),
+      untilDestroyed(this)
+    ).subscribe(tasks => {
+      this.calendar.forEach((week: Week) => {
+        week.days.forEach(day => {
+          day.event = tasks.filter(task => task.currentDate === day.value.format('DD-MM-YYYY')).map(task => task);
+        })
+      }) 
+    })
   }
 
   public generateCalendare(now: moment.Moment): void {
@@ -69,8 +91,7 @@ export class MonthScheduleComponent implements OnInit {
             const active = moment().isSame(value, 'date');
             const disabled = !now.isSame(value, 'month');
             const selected = now.isSame(value, 'date');
-            const event: [] = [];
-
+            let event: fireTask[] = [];
             return {
               value, active, disabled, selected, event
             }

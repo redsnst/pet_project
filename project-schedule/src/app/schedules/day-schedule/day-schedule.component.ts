@@ -1,7 +1,14 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild, AfterViewInit, ElementRef } from '@angular/core';
 import { DateService } from 'src/app/shared/date.service';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as moment from 'moment';
+import { fireTask, TaskService } from 'src/app/shared/task.service';
+import { switchMap } from 'rxjs/operators';
+
+interface dayTimes {
+  startHour: string,
+  endHour: string
+}
 
 @UntilDestroy()
 @Component({
@@ -10,25 +17,74 @@ import * as moment from 'moment';
   styleUrls: ['./day-schedule.component.less'],
   providers: [DateService]
 })
-export class DayScheduleComponent implements OnInit {
+export class DayScheduleComponent implements OnInit, AfterViewInit {
 
-  public times: string[] = [];
+  @ViewChild('redLine') public redLine!: ElementRef<HTMLDivElement>;
 
-  public constructor(private readonly dateService: DateService) { }
+  public times: dayTimes[] = [];
+  public date!: moment.Moment;
+  public events: fireTask[] = [];
+
+  public constructor(private readonly dateService: DateService, private readonly taskService: TaskService) { }
 
   public ngOnInit(): void {
-    this.dateService.date.pipe(untilDestroyed(this)).subscribe(this.generateCalendare.bind(this));
+    this.dateService.date.pipe(untilDestroyed(this)).subscribe(date => {
+      this.generateCalendare(date);
+      this.date = date.clone();
+    });
+    this.dateService.date.pipe(
+      switchMap(value => this.taskService.load(value)),
+      untilDestroyed(this)
+    ).subscribe(tasks => {
+      this.events = [];
+      tasks.forEach(task => {
+          const tableDay = moment(this.date).format('YYYY-MM-DD');
+          const taskDay = moment(task.timeFrom).format('YYYY-MM-DD');
+          if (tableDay === taskDay) {
+            const eventStart = moment(task.timeFrom);
+            const eventEnd = moment(task.timeTo);
+            const tableStart = moment(this.date.clone().startOf('day'), 'HH:mm');
+            const timeDiff = eventStart.diff(tableStart, 'minutes');
+            const rowHeight = 1248 / 24;
+            const eventTop = (timeDiff / 60) * rowHeight;
+            const blockHeight = (eventEnd.diff(eventStart, 'minutes') / 60) * rowHeight;
+            
+            const index = this.events.findIndex(event => {
+              return event.timeFrom === task.timeFrom
+            });
+
+            if (index === -1) {
+              this.events.push({...task, top: `${eventTop}px`, height: `${blockHeight}px`});
+            }
+          }
+      })     
+    })
   }
 
-  public generateCalendare() {
-    var start = moment().startOf('day');
+  public ngAfterViewInit(): void {
+    this.redLineCalculate();
+    setInterval(() => {
+      this.redLineCalculate();
+    }, 5 * 60 * 1000)
+  }
+
+  public redLineCalculate() {
+    const nowTime = moment();
+    const tableStart = moment(this.date.clone().startOf('day'), 'HH:mm');
+    const rowHeight = 1248 / 24;
+    const timeDiff = nowTime.diff(tableStart, 'minutes');
+    const eventTop = (timeDiff / 60) * rowHeight;
+    this.redLine.nativeElement.style.top = eventTop + 'px'
+  }
+
+  public generateCalendare(date: moment.Moment) {
+    var start = date.clone().startOf('day');
     var times = [];
 
     for (var i = 0; i < 24; i++) {
-      var hour = start.format('h');
-      var ampm = start.format('A'); 
-      var interval = hour + ':00-' + (Number(hour) == 12 ? 1 : parseInt(hour) + 1) + ':00' + ampm;
-      times.push(interval); 
+      const startHour = start.clone();
+      const endHour = start.clone().add(1, 'hour');
+      times.push({startHour: startHour.format('YYYY-MM-DD HH:mm:ss'), endHour: endHour.format('YYYY-MM-DD HH:mm:ss')});
       start.add(1, 'hour'); 
     }
 
