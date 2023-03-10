@@ -12,6 +12,7 @@ export interface fireTask {
   currentDate: string,
   top?: string;
   height?: string;
+  id?: string;
 }
 
 @Injectable({
@@ -42,5 +43,15 @@ export class TaskService {
 
         return res;
       }));
+  }
+
+  public delete(task: any): Observable<void> {
+    return this.http
+      .delete<void>(`${TaskService.url}/${task.date}/${task.id}.json`)
+  }
+
+  public update(task: any): Observable<void> {
+    return this.http
+      .put<void>(`${TaskService.url}/${task.date}/${task.id}.json`, task.event)
   }
 }
