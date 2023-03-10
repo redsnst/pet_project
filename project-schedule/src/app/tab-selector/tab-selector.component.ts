@@ -1,4 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { MatTabChangeEvent } from '@angular/material/tabs';
+import { DayScheduleComponent } from '../schedules/day-schedule/day-schedule.component';
+import { MonthScheduleComponent } from '../schedules/month-schedule/month-schedule.component';
+import { WeekScheduleComponent } from '../schedules/week-schedule/week-schedule.component';
 
 @Component({
   selector: 'app-tab-selector',
@@ -7,9 +11,29 @@ import { Component, OnInit } from '@angular/core';
 })
 export class TabSelectorComponent implements OnInit {
 
+  @ViewChild('monthTab') public monthTab!: MonthScheduleComponent;
+  @ViewChild('weekTab') public weekTab!: WeekScheduleComponent;
+  @ViewChild('dayTab') public dayTab!: DayScheduleComponent;
+
   constructor() { }
 
   ngOnInit(): void {
+  }
+
+  onTabSelected(event: MatTabChangeEvent) {
+    switch (event.index) {
+      case 0:
+        this.monthTab.update(); // Call a method to update the MonthScheduleComponent
+        break;
+      case 1:
+        this.weekTab.update(); // Call a method to update the WeekScheduleComponent
+        break;
+      case 2:
+        this.dayTab.update(); // Call a method to update the DayScheduleComponent
+        break;
+      default:
+        break;
+    }
   }
 
 }

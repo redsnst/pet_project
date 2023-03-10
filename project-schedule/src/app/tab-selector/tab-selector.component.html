@@ -1,5 +1,5 @@
-<mat-tab-group class="tab-select-group" mat-stretch-tabs="false" mat-align-tabs="start">
-    <mat-tab label="Month"><app-month-schedule></app-month-schedule></mat-tab>
-    <mat-tab label="Week"><app-week-schedule></app-week-schedule></mat-tab>
-    <mat-tab label="Day"><app-day-schedule></app-day-schedule></mat-tab>
+<mat-tab-group class="tab-select-group" mat-stretch-tabs="false" mat-align-tabs="start" (selectedTabChange)="onTabSelected($event)">
+    <mat-tab label="Month"><app-month-schedule #monthTab></app-month-schedule></mat-tab>
+    <mat-tab label="Week"><app-week-schedule #weekTab></app-week-schedule></mat-tab>
+    <mat-tab label="Day"><app-day-schedule #dayTab></app-day-schedule></mat-tab>
 </mat-tab-group>

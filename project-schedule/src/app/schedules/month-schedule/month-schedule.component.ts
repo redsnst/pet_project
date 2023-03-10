@@ -6,6 +6,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { EventModalComponent,  } from 'src/app/event-modal/event-modal.component';
 import { TaskService, fireTask } from 'src/app/shared/task.service';
 import { switchMap } from 'rxjs/operators';
+import { EventEditModalComponent } from 'src/app/event-edit-modal/event-edit-modal.component';
 
 interface Day {
   value: moment.Moment,
@@ -56,6 +57,16 @@ export class MonthScheduleComponent implements OnInit {
     });
   }
 
+  public openEditDialog(event: any, day: Day): void {
+    const dialogRef = this.dialog.open(EventEditModalComponent, {
+      data: {id: event.id, day: day, event: event},
+    });
+
+    dialogRef.afterClosed().subscribe(() => {
+      this.dateService.dateTrigger()
+    });
+  }
+
 
   public ngOnInit(): void {
     this.dateService.date.pipe(untilDestroyed(this)).subscribe(date => {
@@ -100,5 +111,9 @@ export class MonthScheduleComponent implements OnInit {
     }
     
     this.calendar = calendar; 
+  }
+
+  public update(): void {
+    this.dateService.dateTrigger();
   }
 }

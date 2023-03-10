@@ -22,7 +22,7 @@
                             <mat-card-title (click)="openDialog(day)">{{day.value | dayMoment}}</mat-card-title>
                         </mat-card-header>
                         <mat-card-content>
-                            <div class="event-block" *ngFor="let ev of day.event">
+                            <div (click)="openEditDialog(ev, day)" class="event-block" *ngFor="let ev of day.event">
                                 {{ev.name}} {{ev.timeFrom | event}}-{{ev.timeTo | event}}
                             </div>
                         </mat-card-content>

@@ -6,7 +6,7 @@ import { BehaviorSubject } from 'rxjs';
   providedIn: 'root'
 })
 export class DateService {
-  public date: BehaviorSubject<moment.Moment> = new BehaviorSubject<moment.Moment>(moment());
+  public date = new BehaviorSubject<moment.Moment>(moment());
 
   public nextDate(type: moment.unitOfTime.DurationConstructor): void {
     this.date.next(this.date.value.add(1, type))
@@ -14,5 +14,9 @@ export class DateService {
 
   public previousDate(type: moment.unitOfTime.DurationConstructor): void {
     this.date.next(this.date.value.add(-1, type))
+  }
+
+  public dateTrigger() : void {
+    this.date.next(moment());
   }
 }

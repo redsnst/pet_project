@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, AfterViewInit, ElementRef } from '@angular/core';
+import { Component, OnInit, ViewChild, AfterViewInit, ElementRef, OnDestroy } from '@angular/core';
 import { DateService } from 'src/app/shared/date.service';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as moment from 'moment';
@@ -17,13 +17,14 @@ interface dayTimes {
   styleUrls: ['./day-schedule.component.less'],
   providers: [DateService]
 })
-export class DayScheduleComponent implements OnInit, AfterViewInit {
+export class DayScheduleComponent implements OnInit, AfterViewInit, OnDestroy {
 
   @ViewChild('redLine') public redLine!: ElementRef<HTMLDivElement>;
 
   public times: dayTimes[] = [];
   public date!: moment.Moment;
   public events: fireTask[] = [];
+  public redLineInterval: any;
 
   public constructor(private readonly dateService: DateService, private readonly taskService: TaskService) { }
 
@@ -31,6 +32,9 @@ export class DayScheduleComponent implements OnInit, AfterViewInit {
     this.dateService.date.pipe(untilDestroyed(this)).subscribe(date => {
       this.generateCalendare(date);
       this.date = date.clone();
+      if (this.redLine) {
+        this.redLineCalculate();
+      }
     });
     this.dateService.date.pipe(
       switchMap(value => this.taskService.load(value)),
@@ -63,18 +67,28 @@ export class DayScheduleComponent implements OnInit, AfterViewInit {
 
   public ngAfterViewInit(): void {
     this.redLineCalculate();
-    setInterval(() => {
+    this.redLineInterval = setInterval(() => {
       this.redLineCalculate();
-    }, 5 * 60 * 1000)
+    }, 1 * 60 * 1000)
+  }
+
+  public ngOnDestroy(): void {
+    clearInterval(this.redLineInterval);
   }
 
   public redLineCalculate() {
     const nowTime = moment();
-    const tableStart = moment(this.date.clone().startOf('day'), 'HH:mm');
-    const rowHeight = 1248 / 24;
-    const timeDiff = nowTime.diff(tableStart, 'minutes');
-    const eventTop = (timeDiff / 60) * rowHeight;
-    this.redLine.nativeElement.style.top = eventTop + 'px'
+    if (this.date.format('DD-MM-YYYY') === nowTime.format('DD-MM-YYYY')) {
+      const tableStart = moment(this.date.clone().startOf('day'), 'HH:mm');
+      const rowHeight = 1248 / 24;
+      const timeDiff = nowTime.diff(tableStart, 'minutes');
+      const eventTop = (timeDiff / 60) * rowHeight;
+      this.redLine.nativeElement.style.visibility = 'visible'
+      this.redLine.nativeElement.style.top = eventTop + 'px'
+    } else {
+      this.redLine.nativeElement.style.visibility = 'hidden'
+    }
+    
   }
 
   public generateCalendare(date: moment.Moment) {
@@ -89,5 +103,9 @@ export class DayScheduleComponent implements OnInit, AfterViewInit {
     }
 
     this.times = times;
+  }
+
+  public update(): void {
+    this.dateService.dateTrigger();
   }
 }

@@ -18,6 +18,7 @@ import { DayMomentPipe } from './shared/day-moment.pipe';
 import { EventModalComponent } from './event-modal/event-modal.component';
 import { DaySchedulePipe } from './shared/day-schedule.pipe';
 import { EventPipe } from './shared/event.pipe';
+import { EventEditModalComponent } from './event-edit-modal/event-edit-modal.component';
 
 @NgModule({
   declarations: [
@@ -33,7 +34,8 @@ import { EventPipe } from './shared/event.pipe';
     DayMomentPipe,
     EventModalComponent,
     DaySchedulePipe,
-    EventPipe
+    EventPipe,
+    EventEditModalComponent
   ],
   imports: [
     BrowserModule,
