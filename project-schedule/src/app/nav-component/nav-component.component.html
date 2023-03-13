@@ -6,7 +6,11 @@
     <mat-toolbar>Menu</mat-toolbar>
     <mat-nav-list>
       <a mat-list-item routerLink="/">Welcome page</a>
-      <a mat-list-item routerLink="/schedule">Schedule</a>
+      <a *ngIf="(afAuth.user | async)" mat-list-item routerLink="/schedule">Schedule</a>
+      <a *ngIf="!(afAuth.user | async)" mat-list-item routerLink="/signin">Login</a>
+      <a *ngIf="!(afAuth.user | async)" mat-list-item routerLink="/signup">Sign-up</a>
+      <a *ngIf="(afAuth.user | async)" mat-list-item (click)="logout()" routerLink="/">Log out</a>
+
     </mat-nav-list>
   </mat-sidenav>
   <mat-sidenav-content>

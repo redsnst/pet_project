@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import * as moment from 'moment';
 import { Observable } from 'rxjs/internal/Observable';
 import { map } from 'rxjs/operators';
+import { AuthService } from './auth.service';
 
 export interface fireTask {
   name: string,
@@ -20,13 +21,13 @@ export interface fireTask {
 })
 export class TaskService {
 
-  static url = 'https://pet-project-c8673-default-rtdb.europe-west1.firebasedatabase.app/'
+  static url = 'https://my-pet-project-54af1-default-rtdb.europe-west1.firebasedatabase.app/'
 
-  public constructor(private http: HttpClient) { }
+  public constructor(private http: HttpClient, private authService: AuthService) { }
 
   public load(date: moment.Moment): Observable<fireTask[]> {
     return this.http
-      .get<fireTask[]>(`${TaskService.url}/${date.format('MM-YYYY')}.json`)
+      .get<fireTask[]>(`${TaskService.url}/${this.authService.userId}/${date.format('MM-YYYY')}.json`)
       .pipe(map((tasks: any) => {
         if (!tasks) {
           return [];
@@ -37,7 +38,7 @@ export class TaskService {
 
   public create(task: fireTask): Observable<any> {
     return this.http
-      .post<any>(`${TaskService.url}/${task.date}.json`, task)
+      .post<any>(`${TaskService.url}/${this.authService.userId}/${task.date}.json`, task)
       .pipe(map(res => {
         console.log(res);
 
@@ -47,11 +48,11 @@ export class TaskService {
 
   public delete(task: any): Observable<void> {
     return this.http
-      .delete<void>(`${TaskService.url}/${task.date}/${task.id}.json`)
+      .delete<void>(`${TaskService.url}/${this.authService.userId}/${task.date}/${task.id}.json`)
   }
 
   public update(task: any): Observable<void> {
     return this.http
-      .put<void>(`${TaskService.url}/${task.date}/${task.id}.json`, task.event)
+      .put<void>(`${TaskService.url}/${this.authService.userId}/${task.date}/${task.id}.json`, task.event)
   }
 }
