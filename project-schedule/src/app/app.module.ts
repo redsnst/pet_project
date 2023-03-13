@@ -20,6 +20,10 @@ import { DaySchedulePipe } from './shared/day-schedule.pipe';
 import { EventPipe } from './shared/event.pipe';
 import { EventEditModalComponent } from './event-edit-modal/event-edit-modal.component';
 
+import { environment } from 'src/environments/environment';
+import { AngularFireModule } from '@angular/fire/compat';
+import { SignupComponent } from './signup/signup.component';
+import { SigninComponent } from './signin/signin.component'
 @NgModule({
   declarations: [
     AppComponent,
@@ -35,13 +39,16 @@ import { EventEditModalComponent } from './event-edit-modal/event-edit-modal.com
     EventModalComponent,
     DaySchedulePipe,
     EventPipe,
-    EventEditModalComponent
+    EventEditModalComponent,
+    SignupComponent,
+    SigninComponent
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     BrowserAnimationsModule,
-    MaterialModule
+    MaterialModule,
+    AngularFireModule.initializeApp(environment.firebase)
   ],
   providers: [MomentPipe],
   bootstrap: [AppComponent]

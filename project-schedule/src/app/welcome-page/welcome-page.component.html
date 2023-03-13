@@ -8,6 +8,7 @@
       </p>
     </mat-card-content>
     <mat-card-actions>
-      <button mat-button routerLink="/schedule">GO TO SCHEDULE</button>
+      <button *ngIf="(afAuth.user | async)" mat-button routerLink="/schedule">GO TO SCHEDULE</button>
+      <button *ngIf="!(afAuth.user | async)" mat-button routerLink="/signin">GO TO LOGIN</button>
     </mat-card-actions>
   </mat-card>

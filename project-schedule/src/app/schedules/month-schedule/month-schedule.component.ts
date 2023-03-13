@@ -7,6 +7,7 @@ import { EventModalComponent,  } from 'src/app/event-modal/event-modal.component
 import { TaskService, fireTask } from 'src/app/shared/task.service';
 import { switchMap } from 'rxjs/operators';
 import { EventEditModalComponent } from 'src/app/event-edit-modal/event-edit-modal.component';
+import { AuthService } from 'src/app/shared/auth.service';
 
 interface Day {
   value: moment.Moment,
