@@ -16,6 +16,9 @@
             <span>{{ firebaseErrorMessage }}</span>
         </div>
 
-        <button mat-raised-button color="primary">Login</button>        
+        <button mat-raised-button color="primary">Login</button>   
+        <button mat-raised-button (click)="googleAuthService.googleAuth()">
+            Log in with Google
+          </button>     
     </form>
 </mat-card>
