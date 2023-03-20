@@ -23,7 +23,8 @@ import { EventEditModalComponent } from './event-edit-modal/event-edit-modal.com
 import { environment } from 'src/environments/environment';
 import { AngularFireModule } from '@angular/fire/compat';
 import { SignupComponent } from './signup/signup.component';
-import { SigninComponent } from './signin/signin.component'
+import { SigninComponent } from './signin/signin.component';
+
 @NgModule({
   declarations: [
     AppComponent,
