@@ -23,13 +23,13 @@ export class TabSelectorComponent implements OnInit {
   onTabSelected(event: MatTabChangeEvent) {
     switch (event.index) {
       case 0:
-        this.monthTab.update(); // Call a method to update the MonthScheduleComponent
+        this.monthTab.update();
         break;
       case 1:
-        this.weekTab.update(); // Call a method to update the WeekScheduleComponent
+        this.weekTab.update();
         break;
       case 2:
-        this.dayTab.update(); // Call a method to update the DayScheduleComponent
+        this.dayTab.update();
         break;
       default:
         break;

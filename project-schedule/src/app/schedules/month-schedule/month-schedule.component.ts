@@ -7,9 +7,8 @@ import { EventModalComponent,  } from 'src/app/event-modal/event-modal.component
 import { TaskService, fireTask } from 'src/app/shared/task.service';
 import { switchMap } from 'rxjs/operators';
 import { EventEditModalComponent } from 'src/app/event-edit-modal/event-edit-modal.component';
-import { AuthService } from 'src/app/shared/auth.service';
 
-interface Day {
+interface WeekDay {
   value: moment.Moment,
   active: boolean,
   disabled: boolean,
@@ -18,7 +17,7 @@ interface Day {
 }
 
 interface Week {
-  days: Day[];
+  days: WeekDay[];
 }
 
 @UntilDestroy()
@@ -37,7 +36,7 @@ export class MonthScheduleComponent implements OnInit {
 
   public constructor(private readonly dateService: DateService, public dialog: MatDialog, private readonly taskService: TaskService) { }
 
-  public openDialog(day: Day): void {
+  public openDialog(day: WeekDay): void {
     const dialogRef = this.dialog.open(EventModalComponent, {
       data: {name: this.name, timeFrom: this.timeFrom, timeTo: this.timeTo},
     });
@@ -58,7 +57,7 @@ export class MonthScheduleComponent implements OnInit {
     });
   }
 
-  public openEditDialog(event: any, day: Day): void {
+  public openEditDialog(event: any, day: WeekDay): void {
     const dialogRef = this.dialog.open(EventEditModalComponent, {
       data: {id: event.id, day: day, event: event},
     });
